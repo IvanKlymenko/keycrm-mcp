@@ -1,5 +1,6 @@
 import { z } from 'zod';
-import { buildQuery, requireAtLeastOne } from '../utils/validate.js';
+import { buildQuery, requireAtLeastOne, requireConfirm } from '../utils/validate.js';
+import { KeyCrmError } from '../keycrm/errors.js';
 
 const DEFAULT_LIMIT = parseInt(process.env.LIST_DEFAULT_LIMIT || '50', 10);
 
@@ -34,7 +35,7 @@ export function registerProductTools(server, client, wrap) {
     {
       product_id: z.number().int().describe('keyCRM product ID'),
     },
-    wrap('get_product', async (p) => client.get(`/products/${p.product_id}?include=offers,stocks`))
+    wrap('get_product', async (p) => client.get(`/products/${p.product_id}?include=customFields`))
   );
 
   server.tool(
@@ -158,9 +159,7 @@ export function registerProductTools(server, client, wrap) {
     },
     wrap('bulk_update_products', async (p) => {
       if (!p.dry_run && !p.confirm) {
-        throw Object.assign(new Error('bulk_update_products requires confirm: true to execute'), {
-          code: 'VALIDATION_ERROR',
-        });
+        throw new KeyCrmError('VALIDATION_ERROR', 'bulk_update_products requires confirm: true to execute');
       }
 
       const qs = buildQuery({

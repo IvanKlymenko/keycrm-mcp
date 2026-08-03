@@ -16,7 +16,7 @@ export function registerCustomerTools(server, client, wrap) {
       const limit = p.limit ?? DEFAULT_LIMIT;
       const page = p.offset ? Math.floor(p.offset / limit) + 1 : 1;
       const qs = buildQuery({ 'filter[query]': p.query, limit, page });
-      return client.get(`/buyers${qs}`);
+      return client.get(`/buyer${qs}`);
     })
   );
 
@@ -27,7 +27,7 @@ export function registerCustomerTools(server, client, wrap) {
       customer_id: z.number().int().describe('keyCRM customer ID'),
     },
     wrap('get_customer', async (p) =>
-      client.get(`/buyers/${p.customer_id}?include=orders`)
+      client.get(`/buyer/${p.customer_id}?include=company,loyalty,customFields`)
     )
   );
 
@@ -45,7 +45,7 @@ export function registerCustomerTools(server, client, wrap) {
       if (p.email !== undefined) body.email = p.email;
       if (p.phone !== undefined) body.phone = p.phone;
       if (p.comment !== undefined) body.comment = p.comment;
-      return client.post('/buyers', body);
+      return client.post('/buyer', body);
     })
   );
 
@@ -66,7 +66,7 @@ export function registerCustomerTools(server, client, wrap) {
       for (const [k, v] of Object.entries(fields)) {
         if (v !== undefined) body[k] = v;
       }
-      return client.put(`/buyers/${customer_id}`, body);
+      return client.put(`/buyer/${customer_id}`, body);
     })
   );
 
@@ -88,7 +88,7 @@ export function registerCustomerTools(server, client, wrap) {
     },
     wrap('import_customers', async (p) => {
       requireConfirm(p, 'import_customers');
-      return client.post('/buyers/import', { buyers: p.customers });
+      return client.post('/buyer/import', { buyers: p.customers });
     })
   );
 }

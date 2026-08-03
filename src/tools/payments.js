@@ -33,7 +33,7 @@ export function registerPaymentTools(server, client, wrap) {
         amount: p.amount,
       };
       if (p.description !== undefined) body.description = p.description;
-      return client.post(`/payments/${p.payment_id}/attach-transaction`, body);
+      return client.post(`/payments/${p.payment_id}/external-transactions`, body);
     })
   );
 }

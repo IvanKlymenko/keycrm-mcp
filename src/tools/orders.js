@@ -42,7 +42,7 @@ export function registerOrderTools(server, client, wrap) {
         limit,
         page,
       });
-      return client.get(`/orders${qs}`);
+      return client.get(`/order${qs}`);
     })
   );
 
@@ -53,7 +53,7 @@ export function registerOrderTools(server, client, wrap) {
       order_id: z.number().int().describe('keyCRM order ID'),
     },
     wrap('get_order', async (p) =>
-      client.get(`/orders/${p.order_id}?include=products,buyer,payments,tags,status_history`)
+      client.get(`/order/${p.order_id}?include=products,buyer,payments,tags,status,shipping`)
     )
   );
 
@@ -88,7 +88,7 @@ export function registerOrderTools(server, client, wrap) {
       for (const key of optional) {
         if (p[key] !== undefined) body[key] = p[key];
       }
-      return client.post('/orders', body);
+      return client.post('/order', body);
     })
   );
 
@@ -109,7 +109,7 @@ export function registerOrderTools(server, client, wrap) {
       for (const [k, v] of Object.entries(fields)) {
         if (v !== undefined) body[k] = v;
       }
-      return client.put(`/orders/${order_id}`, body);
+      return client.put(`/order/${order_id}`, body);
     })
   );
 
@@ -124,7 +124,7 @@ export function registerOrderTools(server, client, wrap) {
     wrap('update_order_status', async (p) => {
       const body = { status_id: p.status_id };
       if (p.note !== undefined) body.note = p.note;
-      return client.post(`/orders/${p.order_id}/status`, body);
+      return client.put(`/order/${p.order_id}`, body);
     })
   );
 
@@ -141,7 +141,7 @@ export function registerOrderTools(server, client, wrap) {
       const body = { amount: p.amount };
       if (p.payment_method_id !== undefined) body.payment_method_id = p.payment_method_id;
       if (p.description !== undefined) body.description = p.description;
-      return client.post(`/orders/${p.order_id}/payments`, body);
+      return client.post(`/order/${p.order_id}/payment`, body);
     })
   );
 
@@ -153,7 +153,7 @@ export function registerOrderTools(server, client, wrap) {
       tag_id: z.number().int().describe('Tag ID'),
     },
     wrap('add_order_tag', async (p) =>
-      client.post(`/orders/${p.order_id}/tags`, { tag_id: p.tag_id })
+      client.post(`/order/${p.order_id}/tag/${p.tag_id}`)
     )
   );
 
@@ -165,7 +165,7 @@ export function registerOrderTools(server, client, wrap) {
       tag_id: z.number().int().describe('Tag ID'),
     },
     wrap('remove_order_tag', async (p) =>
-      client.delete(`/orders/${p.order_id}/tags/${p.tag_id}`)
+      client.delete(`/order/${p.order_id}/tag/${p.tag_id}`)
     )
   );
 }

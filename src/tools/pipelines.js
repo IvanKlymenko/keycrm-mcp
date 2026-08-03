@@ -48,7 +48,7 @@ export function registerPipelineTools(server, client, wrap) {
         limit,
         page,
       });
-      return client.get(`/pipelines/leads${qs}`);
+      return client.get(`/pipelines/cards${qs}`);
     })
   );
 
@@ -59,7 +59,7 @@ export function registerPipelineTools(server, client, wrap) {
       card_id: z.number().int().describe('Pipeline card ID'),
     },
     wrap('get_pipeline_card', async (p) =>
-      client.get(`/pipelines/leads/${p.card_id}?include=products,payments,contact`)
+      client.get(`/pipelines/cards/${p.card_id}?include=products,payments,contact`)
     )
   );
 
@@ -83,7 +83,7 @@ export function registerPipelineTools(server, client, wrap) {
       for (const key of optional) {
         if (p[key] !== undefined) body[key] = p[key];
       }
-      return client.post('/pipelines/leads', body);
+      return client.post('/pipelines/cards', body);
     })
   );
 
@@ -104,7 +104,7 @@ export function registerPipelineTools(server, client, wrap) {
       for (const [k, v] of Object.entries(fields)) {
         if (v !== undefined) body[k] = v;
       }
-      return client.put(`/pipelines/leads/${card_id}`, body);
+      return client.put(`/pipelines/cards/${card_id}`, body);
     })
   );
 }

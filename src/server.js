@@ -13,7 +13,6 @@ import { registerCustomerTools } from './tools/customers.js';
 import { registerPipelineTools } from './tools/pipelines.js';
 import { registerStorageTools } from './tools/storage.js';
 import { registerCustomFieldTools } from './tools/custom-fields.js';
-import { registerWarehouseTools } from './tools/warehouses.js';
 
 export function createServer() {
   const server = new McpServer({ name: 'keycrm-mcp', version: '1.0.0' });
@@ -28,7 +27,7 @@ export function createServer() {
       const start = Date.now();
       try {
         const result = await fn(params);
-        logger.toolCall({ tool: toolName, params, duration: Date.now() - start, status: 'ok' });
+        logger.toolCall({ tool: toolName, duration: Date.now() - start, status: 'ok' });
         return {
           content: [{ type: 'text', text: JSON.stringify(result ?? null, null, 2) }],
         };
@@ -36,13 +35,13 @@ export function createServer() {
         const normalized = normalizeError(err);
         logger.toolCall({
           tool: toolName,
-          params,
           duration: Date.now() - start,
           status: 'error',
           code: normalized.code,
           message: normalized.message,
         });
         return {
+          isError: true,
           content: [{ type: 'text', text: JSON.stringify(normalized.toJSON(), null, 2) }],
         };
       }
@@ -60,7 +59,6 @@ export function createServer() {
   registerPipelineTools(server, client, wrap);
   registerStorageTools(server, client, wrap);
   registerCustomFieldTools(server, client, wrap);
-  registerWarehouseTools(server, client, wrap);
 
   return server;
 }

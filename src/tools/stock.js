@@ -14,7 +14,7 @@ export function registerStockTools(server, client, wrap) {
         'filter[sku]': p.sku,
         'filter[warehouse_id]': p.warehouse_id,
       });
-      return client.get(`/storages/products${qs}`);
+      return client.get(`/offers/stocks${qs}`);
     })
   );
 
@@ -34,7 +34,7 @@ export function registerStockTools(server, client, wrap) {
         quantity: p.quantity,
       };
       if (p.reason !== undefined) body.reason = p.reason;
-      return client.post('/storages/products', body);
+      return client.put('/offers/stocks', [body]);
     })
   );
 }

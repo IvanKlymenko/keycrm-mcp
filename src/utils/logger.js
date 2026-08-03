@@ -23,10 +23,9 @@ export const logger = {
   warn: (msg) => write('warn', msg),
   info: (msg) => write('info', msg),
   debug: (msg) => write('debug', msg),
-  toolCall({ tool, params, duration, status, code, message }) {
+  toolCall({ tool, duration, status, code, message }) {
     const parts = [
       `tool_call: ${tool}`,
-      `params: ${JSON.stringify(params)}`,
       `duration: ${duration}ms`,
       `status: ${status}`,
     ];
