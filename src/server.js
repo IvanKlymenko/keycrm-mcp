@@ -13,7 +13,9 @@ import { registerCustomerTools } from './tools/customers.js';
 import { registerPipelineTools } from './tools/pipelines.js';
 import { registerStorageTools } from './tools/storage.js';
 import { registerCustomFieldTools } from './tools/custom-fields.js';
-import { registerWarehouseTools } from './tools/warehouses.js';
+import { registerCompanyTools } from './tools/companies.js';
+import { registerUserTools } from './tools/users.js';
+import { registerCallTools } from './tools/calls.js';
 
 export function createServer() {
   const server = new McpServer({ name: 'keycrm-mcp', version: '1.0.0' });
@@ -44,6 +46,7 @@ export function createServer() {
         });
         return {
           content: [{ type: 'text', text: JSON.stringify(normalized.toJSON(), null, 2) }],
+          isError: true,
         };
       }
     };
@@ -60,7 +63,9 @@ export function createServer() {
   registerPipelineTools(server, client, wrap);
   registerStorageTools(server, client, wrap);
   registerCustomFieldTools(server, client, wrap);
-  registerWarehouseTools(server, client, wrap);
+  registerCompanyTools(server, client, wrap);
+  registerUserTools(server, client, wrap);
+  registerCallTools(server, client, wrap);
 
   return server;
 }

@@ -1,20 +1,23 @@
 import { z } from 'zod';
 import { buildQuery } from '../utils/validate.js';
-
-const DEFAULT_LIMIT = parseInt(process.env.LIST_DEFAULT_LIMIT || '50', 10);
+import { idList, pageQuery, pagination } from '../utils/schemas.js';
 
 export function registerCategoryTools(server, client, wrap) {
   server.tool(
     'list_categories',
-    'List all product categories.',
+    'List product categories.',
     {
-      limit: z.number().int().min(1).max(200).optional().describe('Number of results to return'),
-      offset: z.number().int().min(0).optional().describe('Pagination offset'),
+      category_id: idList.optional().describe('Filter by category ID(s)'),
+      parent_id: idList.optional().describe('Filter by parent category ID(s)'),
+      ...pagination,
     },
     wrap('list_categories', async (p) => {
-      const limit = p.limit ?? DEFAULT_LIMIT;
-      const page = p.offset ? Math.floor(p.offset / limit) + 1 : 1;
-      return client.get(`/products/categories${buildQuery({ limit, page })}`);
+      const qs = buildQuery({
+        'filter[category_id]': p.category_id,
+        'filter[parent_id]': p.parent_id,
+        ...pageQuery(p),
+      });
+      return client.get(`/products/categories${qs}`);
     })
   );
 
